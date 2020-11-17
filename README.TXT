@@ -1,5 +1,5 @@
 Project: foxes-and-rabbits-v2
-Authors: Michael Kölling and David J. Barnes
+Authors: Michael Kölling and David J. Barnes and Craig I. Hussey
 
 This project is part of the material for chapter 10 of the book
 
@@ -20,3 +20,9 @@ How to start:
         + simulateOneStep - for a single step.
         + simulate - and supply a number (say 10) for that many steps.
         + runLongSimulation - for a simulation of 500 steps.
+       
+
+        
+******** Added a Chupucabra. The animal eats rabbits, foxes, and other Chupucabra 
+
+        

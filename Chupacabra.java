@@ -3,69 +3,70 @@ import java.util.Iterator;
 import java.util.Random;
 
 /**
- * A simple model of a fox.
- * Foxes age, move, eat rabbits, and die.
- * 
- * @author David J. Barnes and Michael Kölling
- * @version 2016.02.29 (2)
+ * scaly greenish-gray skin and sharp spines or quills running down its back.
+ * eats rabbits, foxes, and other Chupucabra. Should spread out and give the 
+ * foxes a hard time but shouldn't exterminate any species.
+ *
+ * @author Craig Hussey
+ * @version 11.16.2020
  */
-public class Fox extends Animal
+public class Chupacabra extends Animal
 {
-    // Characteristics shared by all foxes (class variables).
+    // Characteristics shared by all Chupacabra (class variables).
     
-    // The age at which a fox can start to breed.
-    private static final int BREEDING_AGE = 15;
-    // The age to which a fox can live.
-    private static final int MAX_AGE = 150;
-    // The likelihood of a fox breeding.
-    private static final double BREEDING_PROBABILITY = 0.08;
+    // The age at which a Chupacabra can start to breed.
+    private static final int BREEDING_AGE = 6;
+    // The age to which a Chupacabra can live.
+    private static final int MAX_AGE = 66;
+    // The likelihood of a Chupacabra breeding.
+    private static final double BREEDING_PROBABILITY = 0.058;
     // The maximum number of births.
-    private static final int MAX_LITTER_SIZE = 2;
-    // The food value of a single rabbit. In effect, this is the
-    // number of steps a fox can go before it has to eat again.
-    private static final int RABBIT_FOOD_VALUE = 9;
+    private static final int MAX_LITTER_SIZE = 5;
+    // The food value of a single piece of food. In effect, this is the
+    // number of steps a Chupacabra can go before it has to eat again.
+    private static final int FOOD_VALUE = 7;
     // A shared random number generator to control breeding.
     private static final Random rand = Randomizer.getRandom();
     
     // Individual characteristics (instance fields).
 
-    // The fox's food level, which is increased by eating rabbits.
+    // The Chupacabra's food level, which is increased by eating food.
     private int foodLevel;
 
     /**
-     * Create a fox. A fox can be created as a new born (age zero
+     * Create a Chupacabra. A Chupacabra can be created as a new born (age zero
      * and not hungry) or with a random age and food level.
      * 
-     * @param randomAge If true, the fox will have random age and hunger level.
+     * @param randomAge If true, the Chupacabra will have random age and hunger level.
      * @param field The field currently occupied.
      * @param location The location within the field.
      */
-    public Fox(boolean randomAge, Field field, Location location)
+    public Chupacabra(boolean randomAge, Field field, Location location)
     {
         super(field, location);
         if(randomAge) {
             setAge(rand.nextInt(MAX_AGE));
-            foodLevel = rand.nextInt(RABBIT_FOOD_VALUE);
+            foodLevel = rand.nextInt(FOOD_VALUE);
         }
         else {
             setAge(0);
-            foodLevel = RABBIT_FOOD_VALUE;
+            foodLevel = FOOD_VALUE;
         }
     }
     
     /**
-     * This is what the fox does most of the time: it hunts for
-     * rabbits. In the process, it might breed, die of hunger,
+     * This is what the Chupacabra does most of the time: it hunts for
+     * food. In the process, it might breed, die of hunger,
      * or die of old age.
      * @param field The field currently occupied.
-     * @param newFoxes A list to return newly born foxes.
+     * @param newChupacabra A list to return newly born Chupacabra.
      */
-    public void act(List<Animal> newFoxes)
+    public void act(List<Animal> newChupacabra)
     {
         incrementAge();
         incrementHunger();
         if(isAlive()) {
-            giveBirth(newFoxes);            
+            giveBirth(newChupacabra);            
             // Move towards a source of food if found.
             Location newLocation = findFood();
             if(newLocation == null) { 
@@ -84,7 +85,7 @@ public class Fox extends Animal
     }
     
     /**
-     * Make this fox more hungry. This could result in the fox's death.
+     * Make this Chupacabra more hungry. This could result in the Chupacabra's death.
      */
     private void incrementHunger()
     {
@@ -95,8 +96,8 @@ public class Fox extends Animal
     }
     
     /**
-     * Look for rabbits adjacent to the current location.
-     * Only the first live rabbit is eaten.
+     * Look for food adjacent to the current location.
+     * Only the first live food is eaten.
      * @return Where food was found, or null if it wasn't.
      */
     private Location findFood()
@@ -107,11 +108,12 @@ public class Fox extends Animal
         while(it.hasNext()) {
             Location where = it.next();
             Object animal = field.getObjectAt(where);
-            if(animal instanceof Rabbit) {
-                Rabbit rabbit = (Rabbit) animal;
-                if(rabbit.isAlive()) { 
-                    rabbit.setDead();
-                    foodLevel = RABBIT_FOOD_VALUE;
+            //eats rabbits, foxes, and other Chupacabra
+            if(animal instanceof Rabbit || animal instanceof Fox || animal instanceof Chupacabra) {
+                Animal thisAnimal = (Animal)animal;
+                if(thisAnimal.isAlive()) { 
+                    thisAnimal.setDead();
+                    foodLevel = FOOD_VALUE;
                     return where;
                 }
             }
@@ -120,27 +122,27 @@ public class Fox extends Animal
     }
     
     /**
-     * Check whether or not this fox is to give birth at this step.
+     * Check whether or not this Chupacabra is to give birth at this step.
      * New births will be made into free adjacent locations.
-     * @param newFoxes A list to return newly born foxes.
+     * @param newChupacabra A list to return newly born Chupacabra.
      */
-    private void giveBirth(List<Animal> newFoxes)
+    private void giveBirth(List<Animal> newChupacabra)
     {
-        // New foxes are born into adjacent locations.
+        // New Chupacabra are born into adjacent locations.
         // Get a list of adjacent free locations.
         Field field = getField();
         List<Location> free = field.getFreeAdjacentLocations(getLocation());
         int births = breed();
         for(int b = 0; b < births && free.size() > 0; b++) {
             Location loc = free.remove(0);
-            Fox young = new Fox(false, field, loc);
-            newFoxes.add(young);
+            Chupacabra young = new Chupacabra(false, field, loc);
+            newChupacabra.add(young);
         }
     }
         
     /**
-     * Returns the breeding age of this fox
-     * @return the breeding age of this fox
+     * Returns the breeding age of this Chupacabra
+     * @return the breeding age of this Chupacabra
      */
     protected int getBreedingAge()
     {
@@ -173,4 +175,5 @@ public class Fox extends Animal
     {
         return MAX_AGE;
     }
+
 }
